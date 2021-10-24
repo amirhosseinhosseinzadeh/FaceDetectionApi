@@ -9,13 +9,15 @@ namespace TestFaceApi
     {
         public async Task<byte[]> ConvertToByteArrayAsync(string imagePath)
         {
-            MemoryStream ms = new();
-            using (FileStream stream = new(imagePath, FileMode.Open))
-            {
-                await stream.CopyToAsync(ms);
-            }
-            var bytes = ms.ToArray();
-            return bytes;
+           using(MemoryStream ms = new())
+           {
+              using (FileStream stream = new(imagePath, FileMode.Open))
+              {
+                  await stream.CopyToAsync(ms);
+              }
+              var bytes = ms.ToArray();
+              return bytes;
+           }
         }
 
         public void FromBytesToImage(byte[] imageBytes,string fileName)
