@@ -1,0 +1,30 @@
+@model OrderViewModel
+
+@{
+    ViewData["Title"] = "Register order page";
+}
+
+<div>
+    <img src="~/images/facesLogo.jpg" />
+    <h2> Order registration </h2>
+
+</div>
+
+<form method="post" asp-action="RegisterOrder" asp-controller="Home" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-4">
+            <h3>
+                Enter your email address and upload your faces picture
+            </h3>
+            <div class="form-group">
+                <label asp-for="@Model.UserEmail"></label>
+                <input asp-for="@Model.UserEmail" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-10">
+            <p>Upload image using the bellow button</p>
+            <input type="file" name="file" />
+        </div>
+    </div>
+    <input type="submit" class="btn btn-info" value="submit" />
+</form>
