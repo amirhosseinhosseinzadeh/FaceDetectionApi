@@ -16,6 +16,9 @@ using Messaging.InterfacesConstants.Constants;
 using GreenPipes;
 using OrdersApi.Messages.Consumers;
 using OrdersApi.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using OrdersApi.Persistence;
 
 namespace OrdersApi
 {
@@ -62,6 +65,10 @@ namespace OrdersApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "OrdersApi", Version = "v1" });
             });
+            services.AddDbContext<OrdersDataContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("OrderDataContext"))
+            );
+            services.AddScoped<IOrderRepository,OrderRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
