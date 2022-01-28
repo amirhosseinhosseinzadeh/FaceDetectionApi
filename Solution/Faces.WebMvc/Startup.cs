@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Faces.WebMvc.Services;
+using Refit;
+using Faces.WebMvc.RestClients;
 
 namespace Faces.WebMvc
 {
@@ -30,6 +32,7 @@ namespace Faces.WebMvc
                 }
             ));
             services.AddControllersWithViews();
+            services.AddHttpClient<IORderManagementApi,OrderManagementApi>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

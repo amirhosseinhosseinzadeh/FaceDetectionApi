@@ -80,7 +80,7 @@ namespace OrdersApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OrdersApi v1"));
             }
-
+            app.UseCors("openPolicy");
             app.UseHttpsRedirection();
 
             app.UseRouting();
