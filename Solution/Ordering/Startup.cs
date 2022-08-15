@@ -34,29 +34,27 @@ namespace OrdersApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMassTransit(c =>
-            {
-                c.AddConsumer<RegisterOrderCommandConsumer>();
-            });
-            services.AddTransient(options => Bus.Factory.CreateUsingRabbitMq(
-                config =>
-                {
-                    config.Host("localhost:15672", "/", c => { });
-                    config.ReceiveEndpoint(RabbitMqMassTransitConstants.RegisterOrderCommandQueue, e =>
-                    {
-                        e.PrefetchCount = 16;
-                        e.UseMessageRetry(x => x.Interval(3, TimeSpan.FromMinutes(2)));
-                        e.Consumer<RegisterOrderCommandConsumer>(options);
-                    });
+            services.AddMassTransit();
+            services.AddSingleton(options => Bus.Factory.CreateUsingRabbitMq(
+             config =>
+             {
+                 config.Host("localhost", "/", c => { });
+                 config.ReceiveEndpoint(RabbitMqMassTransitConstants.RegisterOrderCommandQueue, e =>
+                 {
+                     e.PrefetchCount = 16;
+                     e.UseMessageRetry(x => x.Interval(3, TimeSpan.FromMinutes(2)));
+                     e.Consumer<RegisterOrderCommandConsumer>(options);
+                 });
                     // I will definietly get error here :)
-                    config.ConfigureEndpoints((IBusRegistrationContext)options);
-                }));
-            services.AddCors(options =>
+                    config.ConfigureEndpoints(options);
+             }));
+            services.AddCors(policy =>
             {
-                options.AddPolicy("openPolcy", config =>
-                 config.AllowAnyMethod()
+                policy.AddPolicy("corsPolicy",
+                    builder => builder
                      .AllowAnyMethod()
-                     .AllowAnyOrigin()
+                     .AllowAnyHeader()
+                     .SetIsOriginAllowed((host) => true)
                      .AllowCredentials());
             });
             services.AddSingleton<IHostedService, BusService>();
@@ -68,7 +66,7 @@ namespace OrdersApi
             services.AddDbContext<OrdersDataContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("OrderDataContext"))
             );
-            services.AddScoped<IOrderRepository,OrderRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
